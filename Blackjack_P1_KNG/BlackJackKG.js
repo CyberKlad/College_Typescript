@@ -14,26 +14,22 @@ var Game = /** @class */ (function () {
 }());
 var Deck = /** @class */ (function () {
     function Deck() {
-        this.drawdeck = new Array;
-        var cardNum = 2;
-        for (var i = 0; i <= 52; i++) {
-            if (i < 36) {
-                this.drawdeck[i] = cardNum++;
-                if (cardNum == 10) {
-                    cardNum = 2;
-                }
-            }
-            else {
-                this.drawdeck[i++] = "Ace";
-                this.drawdeck[i++] = "Jack";
-                this.drawdeck[i++] = "Queen";
-                this.drawdeck[i] = "King";
-            }
-        }
+        this.drawdeck = [[2, Suits.Hearts], [3, Suits.Hearts], [4, Suits.Hearts], [5, Suits.Hearts],
+            [6, Suits.Hearts], [7, Suits.Hearts], [8, Suits.Hearts], [9, Suits.Hearts], [10, Suits.Hearts],
+            [Values.Jack, Suits.Hearts], [Values.Queen, Suits.Hearts], [Values.King, Suits.Hearts], [Values.Ace, Suits.Hearts],
+            [2, Suits.Diamonds], [3, Suits.Diamonds], [4, Suits.Diamonds], [5, Suits.Diamonds],
+            [6, Suits.Diamonds], [7, Suits.Diamonds], [8, Suits.Diamonds], [9, Suits.Diamonds], [10, Suits.Diamonds],
+            [Values.Jack, Suits.Diamonds], [Values.Queen, Suits.Diamonds], [Values.King, Suits.Diamonds], [Values.Ace, Suits.Diamonds],
+            [2, Suits.Clubs], [3, Suits.Clubs], [4, Suits.Clubs], [5, Suits.Clubs],
+            [6, Suits.Clubs], [7, Suits.Clubs], [8, Suits.Clubs], [9, Suits.Clubs], [10, Suits.Clubs],
+            [Values.Jack, Suits.Clubs], [Values.Queen, Suits.Clubs], [Values.King, Suits.Clubs], [Values.Ace, Suits.Clubs],
+            [2, Suits.Spades], [3, Suits.Spades], [4, Suits.Spades], [5, Suits.Spades],
+            [6, Suits.Spades], [7, Suits.Spades], [8, Suits.Spades], [9, Suits.Spades], [10, Suits.Spades],
+            [Values.Jack, Suits.Spades], [Values.Queen, Suits.Spades], [Values.King, Suits.Spades], [Values.Ace, Suits.Spades]];
         console.log(this.drawdeck);
     }
     Deck.prototype.shuffleDeck = function (unshuffled) {
-        for (var i = 0; i <= 52; i++) {
+        for (var i = 0; i < 52; i++) {
             var rndNum = Math.floor(Math.random() * 51);
             var rndOne = unshuffled[i];
             var rndTwo = unshuffled[rndNum];
