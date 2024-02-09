@@ -6,33 +6,58 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const readline_sync_1 = __importDefault(require("readline-sync"));
 class Game {
     constructor() {
-        let newDeck = new Deck();
-        newDeck.shuffleDeck(newDeck.drawdeck);
-        console.log(newDeck.drawdeck);
-        let playerHouse = new Cards();
-        let playerOne = new Cards();
-        playerOne.hand[0] = newDeck.drawCard(newDeck.drawdeck);
-        playerHouse.hand[0] = newDeck.drawCard(newDeck.drawdeck);
-        playerOne.hand[1] = newDeck.drawCard(newDeck.drawdeck);
-        playerHouse.hand[1] = newDeck.drawCard(newDeck.drawdeck);
-        console.log(playerHouse.hand[0] + " | hidden,hidden");
-        console.log(playerOne.hand[0]);
+        this.numAces = 0;
+        playerOne.hand[0] = newDeck.drawCard();
+        if (playerOne.hand[0][0] == 11) {
+            this.numAces += 1;
+        }
+        playerHouse.hand[0] = newDeck.drawCard();
+        playerOne.hand[1] = newDeck.drawCard();
+        if (playerOne.hand[1][0] == 11) {
+            this.numAces += 1;
+        }
+        playerHouse.hand[1] = newDeck.drawCard();
+        console.log("House's Hand: " + playerHouse.hand[0] + " | hidden,hidden");
+        console.log("PlayerOne's Hand: " + playerOne.hand[0] + " | " + playerOne.hand[1]);
+        this.totalPlayer = playerOne.hand[0][0] + playerOne.hand[1][0];
+        console.log("PlayerOne's Total: " + this.totalPlayer);
     }
     startGame() {
-        let cardOne = deck.drawCard(shuffledDeck);
-        console.log(cardOne);
-        let playerOne = new Cards;
-        const move = readline_sync_1.default.question("choose your move: (h)it, (s)tay. ");
-        console.log(move);
+        let handSpot = 2;
+        let move = readline_sync_1.default.question("choose your move: (h)it, (s)tay. ");
+        while (move == "h") {
+            let cardOne = newDeck.drawCard();
+            if (cardOne[0] == 11) {
+                this.numAces += 1;
+            }
+            playerOne.hand[handSpot] = cardOne;
+            console.log(cardOne);
+            this.totalPlayer += cardOne[0];
+            handSpot += 1;
+            if (this.totalPlayer > 21) {
+                if (this.numAces > 0) {
+                    this.totalPlayer -= 10;
+                    this.numAces -= 1;
+                }
+            }
+            console.log("PlayerOne's Total: " + this.totalPlayer);
+            if (this.totalPlayer > 21) {
+                console.log("PlayerOne has busted, you lose.");
+                break;
+            }
+            move = readline_sync_1.default.question("choose your move: (h)it, (s)tay. ");
+        }
+        if (move == "s") {
+        }
     }
 }
 class Deck {
     constructor() {
         this.cursor = 51;
-        this.drawdeck = [[2, "Hearts"], [3, "Hearts"], [4, "Hearts"], [5, "Hearts"],
-            [6, "Hearts"], [7, "Hearts"], [8, "Hearts"], [9, "Hearts"], [10, "Hearts"],
-            [Values.Jack, "Hearts"], [Values.Queen, "Hearts"], [Values.King, "Hearts"],
-            [Values.Ace, "Hearts"], [2, Suits.Diamonds], [3, Suits.Diamonds], [4, Suits.Diamonds], [5, Suits.Diamonds],
+        this.drawdeck = [[2, Suits.Hearts], [3, Suits.Hearts], [4, Suits.Hearts], [5, Suits.Hearts],
+            [6, Suits.Hearts], [7, Suits.Hearts], [8, Suits.Hearts], [9, Suits.Hearts], [10, Suits.Hearts],
+            [Values.Jack, Suits.Hearts], [Values.Queen, Suits.Hearts], [Values.King, Suits.Hearts],
+            [Values.Ace, Suits.Hearts], [2, Suits.Diamonds], [3, Suits.Diamonds], [4, Suits.Diamonds], [5, Suits.Diamonds],
             [6, Suits.Diamonds], [7, Suits.Diamonds], [8, Suits.Diamonds], [9, Suits.Diamonds], [10, Suits.Diamonds],
             [Values.Jack, Suits.Diamonds], [Values.Queen, Suits.Diamonds], [Values.King, Suits.Diamonds], [Values.Ace, Suits.Diamonds],
             [2, Suits.Clubs], [3, Suits.Clubs], [4, Suits.Clubs], [5, Suits.Clubs],
@@ -52,8 +77,8 @@ class Deck {
             this.drawdeck = unshuffled;
         }
     }
-    drawCard(shuffled) {
-        return shuffled[this.cursor--];
+    drawCard() {
+        return this.drawdeck[this.cursor--];
     }
 }
 class Cards {
@@ -75,4 +100,10 @@ var Values;
     Values[Values["Queen"] = 10] = "Queen";
     Values[Values["King"] = 10] = "King";
 })(Values || (Values = {}));
+let newDeck = new Deck();
+newDeck.shuffleDeck(newDeck.drawdeck);
+let playerHouse = new Cards();
+let playerOne = new Cards();
 let newGame = new Game();
+//console.log(newDeck.drawdeck)
+newGame.startGame();
