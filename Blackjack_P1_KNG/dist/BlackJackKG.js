@@ -7,31 +7,48 @@ const readline_sync_1 = __importDefault(require("readline-sync"));
 class Game {
     constructor() {
         this.numAces = 0;
+        this.houseAces = 0;
         playerOne.hand[0] = newDeck.drawCard();
         if (playerOne.hand[0][0] == 11) {
             this.numAces += 1;
         }
         playerHouse.hand[0] = newDeck.drawCard();
+        if (playerHouse.hand[1][0] == 11) {
+            this.numAces += 1;
+        }
         playerOne.hand[1] = newDeck.drawCard();
         if (playerOne.hand[1][0] == 11) {
             this.numAces += 1;
         }
         playerHouse.hand[1] = newDeck.drawCard();
-        console.log("House's Hand: " + playerHouse.hand[0] + " | hidden,hidden");
-        console.log("PlayerOne's Hand: " + playerOne.hand[0] + " | " + playerOne.hand[1]);
+        if (playerHouse.hand[1][0] == 11) {
+            this.numAces += 1;
+        }
+        this.houseHidden = "House's Hand: " + playerHouse.hand[0][1] + "," + playerHouse.hand[0][2] + " | hidden,hidden";
+        this.houseShown = "House's Hand: " + playerHouse.hand[0][1] + "," + playerHouse.hand[0][2]
+            + " | " + playerHouse.hand[1][1] + "," + playerHouse.hand[1][2];
+        this.playerShown = "PlayerOne's Hand: " + playerOne.hand[0][1] + "," + playerOne.hand[0][2]
+            + " | " + playerOne.hand[1][1] + "," + playerOne.hand[1][2];
+        console.log(this.houseHidden);
+        console.log(this.playerShown);
         this.totalPlayer = playerOne.hand[0][0] + playerOne.hand[1][0];
+        this.totalHouse = playerHouse.hand[0][0] + playerHouse.hand[1][0];
         console.log("PlayerOne's Total: " + this.totalPlayer);
     }
     startGame() {
+        let move = "t";
         let handSpot = 2;
-        let move = readline_sync_1.default.question("choose your move: (h)it, (s)tay. ");
+        while (move != "s" && move != "h") {
+            move = readline_sync_1.default.question("choose your move: (h)it, (s)tay. ");
+        }
         while (move == "h") {
+            console.log("PlayerOne Hit");
             let cardOne = newDeck.drawCard();
             if (cardOne[0] == 11) {
                 this.numAces += 1;
             }
             playerOne.hand[handSpot] = cardOne;
-            console.log(cardOne);
+            console.log(this.playerShown += " | " + cardOne[1] + "," + cardOne[2]);
             this.totalPlayer += cardOne[0];
             handSpot += 1;
             if (this.totalPlayer > 21) {
@@ -43,29 +60,71 @@ class Game {
             console.log("PlayerOne's Total: " + this.totalPlayer);
             if (this.totalPlayer > 21) {
                 console.log("PlayerOne has busted, you lose.");
-                break;
+                return;
             }
-            move = readline_sync_1.default.question("choose your move: (h)it, (s)tay. ");
+            move = "t";
+            while (move != "s" && move != "h") {
+                move = readline_sync_1.default.question("choose your move: (h)it, (s)tay. ");
+            }
         }
-        if (move == "s") {
+        console.log("PlayerOne Stay");
+        console.log("House hand reveal");
+        console.log(this.houseShown);
+        let test = 0;
+        while (this.totalHouse < 17) {
+            test += 1;
+            console.log("PlayerHouse Hit");
+            let cardOne = newDeck.drawCard();
+            if (cardOne[0] == 11) {
+                this.houseAces += 1;
+            }
+            playerHouse.hand[handSpot] = cardOne;
+            console.log(this.houseShown += " | " + cardOne[1] + "," + cardOne[2]);
+            this.totalHouse += cardOne[0];
+            handSpot += 1;
+            if (this.totalHouse > 21) {
+                if (this.houseAces > 0) {
+                    this.totalHouse -= 10;
+                    this.houseAces -= 1;
+                }
+            }
+            console.log("PlayerHouse's Total: " + this.totalHouse);
+            if (this.totalHouse > 21) {
+                console.log("PlayerHouse has busted, you win!");
+                return;
+            }
         }
+        if (test == 0)
+            console.log("PlayerHouse's Total: " + this.totalHouse);
+        console.log("House Stay");
+        let whoWon = playerHouse.compareHandValue(this.totalPlayer, this.totalHouse);
+        if (whoWon == 0) {
+            console.log("PlayerOne you have won!");
+        }
+        if (whoWon == 1) {
+            console.log("There has been a push, no winners.");
+        }
+        if (whoWon == 2) {
+            console.log("The House has won!");
+        }
+        console.log(whoWon);
     }
 }
 class Deck {
     constructor() {
         this.cursor = 51;
-        this.drawdeck = [[2, Suits.Hearts], [3, Suits.Hearts], [4, Suits.Hearts], [5, Suits.Hearts],
-            [6, Suits.Hearts], [7, Suits.Hearts], [8, Suits.Hearts], [9, Suits.Hearts], [10, Suits.Hearts],
-            [Values.Jack, Suits.Hearts], [Values.Queen, Suits.Hearts], [Values.King, Suits.Hearts],
-            [Values.Ace, Suits.Hearts], [2, Suits.Diamonds], [3, Suits.Diamonds], [4, Suits.Diamonds], [5, Suits.Diamonds],
-            [6, Suits.Diamonds], [7, Suits.Diamonds], [8, Suits.Diamonds], [9, Suits.Diamonds], [10, Suits.Diamonds],
-            [Values.Jack, Suits.Diamonds], [Values.Queen, Suits.Diamonds], [Values.King, Suits.Diamonds], [Values.Ace, Suits.Diamonds],
-            [2, Suits.Clubs], [3, Suits.Clubs], [4, Suits.Clubs], [5, Suits.Clubs],
-            [6, Suits.Clubs], [7, Suits.Clubs], [8, Suits.Clubs], [9, Suits.Clubs], [10, Suits.Clubs],
-            [Values.Jack, Suits.Clubs], [Values.Queen, Suits.Clubs], [Values.King, Suits.Clubs], [Values.Ace, Suits.Clubs],
-            [2, Suits.Spades], [3, Suits.Spades], [4, Suits.Spades], [5, Suits.Spades],
-            [6, Suits.Spades], [7, Suits.Spades], [8, Suits.Spades], [9, Suits.Spades], [10, Suits.Spades],
-            [Values.Jack, Suits.Spades], [Values.Queen, Suits.Spades], [Values.King, Suits.Spades], [Values.Ace, Suits.Spades]];
+        this.drawdeck = [[2, "2", "Hearts"], [3, "3", "Hearts"], [4, "4", "Hearts"], [5, "5", "Hearts"],
+            [6, "6", "Hearts"], [7, "7", "Hearts"], [8, "8", "Hearts"], [9, "9", "Hearts"], [10, "10", "Hearts"],
+            [Values.Jack, "Jack", "Hearts"], [Values.Queen, "Queen", "Hearts"], [Values.King, "King", "Hearts"],
+            [Values.Ace, "Ace", "Hearts"], [2, "2", "Diamonds"], [3, "3", "Diamonds"], [4, "4", "Diamonds"], [5, "5", "Diamonds"],
+            [6, "6", "Diamonds"], [7, "7", "Diamonds"], [8, "8", "Diamonds"], [9, "9", "Diamonds"], [10, "10", "Diamonds"],
+            [Values.Jack, "Jack", "Diamonds"], [Values.Queen, "Queen", "Diamonds"], [Values.King, "King", "Diamonds"], [Values.Ace, "Ace", "Diamonds"],
+            [2, "2", "Clubs"], [3, "3", "Clubs"], [4, "4", "Clubs"], [5, "5", "Clubs"],
+            [6, "6", "Clubs"], [7, "7", "Clubs"], [8, "8", "Clubs"], [9, "9", "Clubs"], [10, "10", "Clubs"],
+            [Values.Jack, "Jack", "Clubs"], [Values.Queen, "Queen", "Clubs"], [Values.King, "King", "Clubs"], [Values.Ace, "Ace", "Clubs"],
+            [2, "2", "Spades"], [3, "3", "Spades"], [4, "4", "Spades"], [5, "5", "Spades"],
+            [6, "6", "Spades"], [7, "7", "Spades"], [8, "8", "Spades"], [9, "9", "Spades"], [10, "10", "Spades"],
+            [Values.Jack, "Jack", "Spades"], [Values.Queen, "Queen", "Spades"], [Values.King, "King", "Spades"], [Values.Ace, "Ace", "Spades"]];
     }
     shuffleDeck(unshuffled) {
         for (let i = 0; i < 52; i++) {
@@ -83,16 +142,19 @@ class Deck {
 }
 class Cards {
     constructor() {
-        this.hand = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+        this.hand = [[0, "", ""], [0, "", ""], [0, "", ""], [0, "", ""], [0, "", ""], [0, "", ""], [0, "", ""], [0, "", ""], [0, "", ""], [0, "", ""], [0, "", ""], [0, "", ""]];
+    }
+    compareHandValue(Play1, HouseNum) {
+        if (Play1 > HouseNum) {
+            return 0;
+        }
+        if (Play1 == HouseNum) {
+            return 1;
+        }
+        else
+            return 2;
     }
 }
-var Suits;
-(function (Suits) {
-    Suits[Suits["Hearts"] = 0] = "Hearts";
-    Suits[Suits["Diamonds"] = 1] = "Diamonds";
-    Suits[Suits["Clubs"] = 2] = "Clubs";
-    Suits[Suits["Spades"] = 3] = "Spades";
-})(Suits || (Suits = {}));
 var Values;
 (function (Values) {
     Values[Values["Ace"] = 11] = "Ace";
