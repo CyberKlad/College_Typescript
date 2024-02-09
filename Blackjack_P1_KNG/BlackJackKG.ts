@@ -1,6 +1,7 @@
 import readline from 'readline-sync';
 
 class Game {
+//this section mostly just gets the first two cards delt to the house and player
 	playerShown: string;
 	houseShown: string;
 	houseHidden: string;
@@ -11,6 +12,7 @@ class Game {
 	constructor(){
 		this.numAces = 0;
 		this.houseAces = 0;
+//this section adds up the starting Aces
 		playerOne.hand[0] = newDeck.drawCard();
 		if (playerOne.hand[0][0] == 11){
 			this.numAces +=1;
@@ -27,7 +29,9 @@ class Game {
 		if (playerHouse.hand[1][0] == 11){
 			this.numAces +=1;
 		}
+//this section does the intial drawing of the two cards in the correct order and hides the second card given to the house
 		this.houseHidden = "House's Hand: " + playerHouse.hand[0][1] + "," + playerHouse.hand[0][2] + " | hidden,hidden";
+//this saves an unhidden version for later printing
 		this.houseShown = "House's Hand: " + playerHouse.hand[0][1] + "," + playerHouse.hand[0][2] 
 			+ " | "+ playerHouse.hand[1][1] + "," + playerHouse.hand[1][2] ;
 		this.playerShown = "PlayerOne's Hand: " + playerOne.hand[0][1] + "," + playerOne.hand[0][2] 
@@ -38,12 +42,15 @@ class Game {
 		this.totalHouse = playerHouse.hand[0][0]+playerHouse.hand[1][0];
 		console.log("PlayerOne's Total: " + this.totalPlayer);
 	}
+//this method is called once all of the starting setup is done and the game is actually happening
 	startGame(): void {
 		let move = "t";
 		let handSpot = 2;
+//this makes sure the program doesnt move on without a valid input
 		while (move != "s" && move != "h"){
 				move = readline.question("choose your move: (h)it, (s)tay. ");
 			}
+//while the player chooses to hit a card will added totaled and printed to console
 		while(move == "h"){
 			console.log("PlayerOne Hit");
 			let cardOne = newDeck.drawCard();
@@ -54,18 +61,23 @@ class Game {
 			console.log(this.playerShown += " | " + cardOne[1] + "," + cardOne[2]);
 			this.totalPlayer += cardOne[0];
 			handSpot += 1;
+//this checks how many aces the hand has and changes them to 1's as needed
 			if (this.totalPlayer > 21){
 				if (this.numAces > 0){
 					this.totalPlayer -= 10;
 					this.numAces -= 1;
 				}
 			}
+//this checks to see if the player has busted
 			console.log("PlayerOne's Total: " + this.totalPlayer);
 			if (this.totalPlayer > 21){
 				console.log("PlayerOne has busted, you lose.");
 				return;
 			}
 			move = "t";
+			if (this.totalPlayer == 21){
+				move = "s"
+			}
 			while (move != "s" && move != "h"){
 				move = readline.question("choose your move: (h)it, (s)tay. ");
 			}
@@ -74,6 +86,7 @@ class Game {
 		console.log("House hand reveal")
 		console.log(this.houseShown);
 		let test = 0;
+//this section does the same as the player hit section without asking for a hit till house is at, at least 17
 		while (this.totalHouse < 17){
 			test+=1;
 			console.log("PlayerHouse Hit");
@@ -97,6 +110,7 @@ class Game {
 				return;
 			}
 		}
+//this section does the wrap up if both house and player have stayed
 		if (test == 0) console.log("PlayerHouse's Total: " + this.totalHouse);
 		console.log("House Stay")
 		let whoWon = playerHouse.compareHandValue(this.totalPlayer,this.totalHouse);
@@ -109,13 +123,13 @@ class Game {
 		if (whoWon == 2){
 			console.log("The House has won!")
 		}
-		console.log(whoWon);
 	}
 }
 class Deck {
 	drawdeck: Array<[number,string,string]>;
 	cursor: number;
 	constructor(){
+//initialize the deck with exactly whats in it since this is unlikely to ever change
 		this.cursor = 51;
 		this.drawdeck = [[2,"2","Hearts"],[3,"3","Hearts"],[4,"4","Hearts"],[5,"5","Hearts"]
 						,[6,"6","Hearts"],[7,"7","Hearts"],[8,"8","Hearts"],[9,"9","Hearts"],[10,"10","Hearts"]
@@ -131,6 +145,7 @@ class Deck {
 						,[Values.Jack,"Jack","Spades"],[Values.Queen,"Queen","Spades"],[Values.King,"King","Spades"],[Values.Ace,"Ace","Spades"]];
 	}
 	shuffleDeck(unshuffled: Array<[number,string,string]>): void{
+//choose a random postion to trade places with and do this for each spot
 		for (let i = 0; i < 52; i++){
 			let rndNum = Math.floor(Math.random() * 51)
 			let rndOne = unshuffled[i];
@@ -140,15 +155,18 @@ class Deck {
 			this.drawdeck = unshuffled;
 		} 
 	}
+//method for taking a card off the "top" of the deck
 	drawCard(): [number,string,string] {
 		return this.drawdeck[this.cursor--];
 	}
 }
 class Cards {
+//start the hand out with an empty hand of 12 cards the player will never exceed this
 	hand: Array<[number,string,string]>;
 	constructor(){
 		this.hand = [[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""]];
 	}
+//Cards method holding the ability to compare the hand total
 	compareHandValue(Play1: number, HouseNum: number): number{
 		if (Play1 > HouseNum){
 			return 0;
@@ -159,16 +177,17 @@ class Cards {
 		else return 2;
 	}
 }
+//using enum so that I can set the value of names
 enum Values {
 	Ace = 11,
 	Jack = 10,
 	Queen = 10,
 	King = 10,
 }
+//start the game off with a new deck shuffle and start
 let newDeck = new Deck();
 newDeck.shuffleDeck(newDeck.drawdeck);
 let playerHouse = new Cards();
 let playerOne = new Cards();
 let newGame = new Game();
-//console.log(newDeck.drawdeck)
 newGame.startGame();

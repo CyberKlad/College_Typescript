@@ -63,6 +63,9 @@ class Game {
                 return;
             }
             move = "t";
+            if (this.totalPlayer == 21) {
+                move = "s";
+            }
             while (move != "s" && move != "h") {
                 move = readline_sync_1.default.question("choose your move: (h)it, (s)tay. ");
             }
