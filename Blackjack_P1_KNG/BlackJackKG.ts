@@ -166,7 +166,7 @@ class Cards {
 	constructor(){
 		this.hand = [[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""],[0,"",""]];
 	}
-//Cards method holding the ability to compare the hand total
+	//Cards method holding the ability to compare the hand total
 	compareHandValue(Play1: number, HouseNum: number): number{
 		if (Play1 > HouseNum){
 			return 0;
