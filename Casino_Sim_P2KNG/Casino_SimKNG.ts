@@ -1,3 +1,4 @@
+//Korbin Gillette edit to provided skeleton code start and ends provided
 
 // this is an abstract class, meaning, we cannot write "new Game(...)".
 // this is because the class is missing the "simluateGame" method. 
@@ -149,6 +150,9 @@ abstract class Game {
  * time. The dealer will flip a coin. If the coin is heads, the players 
  * win and their money is multiplied by 1.9. Otherwise, the players lose their bets. */ 
 class TailsIWin extends Game {
+
+//Korbin Gillette code start
+
     private _winnersT: Gambler[] = [];
     constructor(casino: Casino){
         super("Tails I Win", casino);
@@ -187,6 +191,7 @@ class WhichCupHasTheMarble extends Game {
     // Is the default profitMultiplier behavior okay? 
 }
 
+//Korbin Gillette code end
 
 /**
  * Helper function to generate uniform random numbers between [0, upper).
@@ -207,6 +212,9 @@ function randomInt( upper: number ) {
  * (total profit of 3.5x). Otherwise, they lose their money.
  */
 class GuessTheNumber extends Game {
+
+//Korbin Gillette code start
+
     private _winnersG: Gambler[] = [];
     constructor(casino: Casino){
         super("Guess The Number", casino);
@@ -225,6 +233,8 @@ class GuessTheNumber extends Game {
     override profitMultiplier( _gambler: Gambler ): number { return 4.5; }
 }
 
+//Korbin Gillette code end
+
 /**
  * Simulated guinea-pig racing. Players choose a pig from 0 to 3.
  * Pig #0 has a 50% chance of winning, and pays out 1.9 if they win. 
@@ -236,6 +246,9 @@ class GuessTheNumber extends Game {
  * each player just picks a pig. 
  */
 class OffTrackGuineaPigRacing extends Game {
+
+//Korbin Gillette code start
+
     private multPig: number = 1.9;
     private _winnersP: Gambler[] = [];
     constructor(casino: Casino){
@@ -268,6 +281,8 @@ class OffTrackGuineaPigRacing extends Game {
     override profitMultiplier( _gambler: Gambler ): number { return this.multPig; }
 }
 
+//Korbin Gillette code end
+
 abstract class Gambler {
     private _name: string;
     private _money: number;
@@ -280,10 +295,13 @@ abstract class Gambler {
         startingFunds: number, 
         targetFunds: number 
     ) {
+//Korbin Gillette code start
         this._name = name;
         this._money = startingFunds;
         this._target = targetFunds;
     }
+
+//Korbin Gillette code end
 
     // These are properties. 
     // When we create a gambler: const gambler = new Gambler(...);
@@ -303,6 +321,9 @@ abstract class Gambler {
      * Add or deduct a given amount of money to the gambler's bankroll. 
      * @param amount The amount of money to add. Negative means to remove.
      */
+
+//Korbin Gillette code start (includes some provided code comments)
+
     addMoney( amount: number ): void {
         this._money += amount;
         if (this instanceof StreakGambler && amount > 0) {
@@ -336,6 +357,8 @@ abstract class Gambler {
         return (this.bankrupt() || this.hitTarget());
     }
 
+//Korbin Gillette code end
+
     /**
      * @returns How much the gambler is going to bet next.
      */
@@ -359,11 +382,15 @@ class StableGambler extends Gambler {
         this._bet = stableBet;
     }
 
+//Korbin Gillette code start
+
     public getBetSize(): number {
         if (this._bet >= this.money) return this.money;
         return this._bet;
     }
 }
+
+//Korbin Gillette code end
 
 /**
  * The high risk gambler always bets half of their current money. If they have
@@ -383,6 +410,7 @@ class HighRiskGambler extends Gambler {
         startingFunds: number, 
         yoloAmnt: number 
     ) {
+//Korbin Gillette code start
         super(name, startingFunds, startingFunds * 5)
         this._yoloAmount = yoloAmnt;
     }
@@ -391,6 +419,8 @@ class HighRiskGambler extends Gambler {
         return ((this.money)/2);
     }
 }
+
+//Korbin Gillette code end
 
 /**
  * The streak better always increases their bet whenever they win by a 
@@ -402,6 +432,9 @@ class HighRiskGambler extends Gambler {
  * 
  * How do we detect whether we won or lost? Override the addMoney method.
  */
+
+//Korbin Gillette code start
+
 class StreakGambler extends Gambler {
     private sBet: number;
     private minBet: number;
@@ -464,6 +497,7 @@ class MartingaleGambler extends Gambler {
     }
 }
 
+//Korbin Gillette code end
 
 class Casino {
     /** a list of games offered in the casino */
@@ -484,6 +518,7 @@ class Casino {
             new TailsIWin( this ),
             new GuessTheNumber( this ),
             new OffTrackGuineaPigRacing( this ),
+            //added game
             new WhichCupHasTheMarble( this ),
         ];
 
@@ -511,6 +546,7 @@ class Casino {
             // Arg 2 starting amount
             // Arg 3 starting bet
             // Arg 4 target
+            //added extra gambler type
             new MartingaleGambler( "Martin", 300, 1, 500),
         ]);
 
