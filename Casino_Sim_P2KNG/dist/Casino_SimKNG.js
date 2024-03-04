@@ -114,6 +114,25 @@ class TailsIWin extends Game {
     }
     profitMultiplier(_gambler) { return 1.9; }
 }
+//which of the 3 cups has the marbel
+class WhichCupHasTheMarble extends Game {
+    constructor(casino) {
+        super("Which Cup Has The Marble", casino);
+        this._winnersW = [];
+    }
+    simulateGame() {
+        this._winnersW = [];
+        let playArray = this.getPlayers();
+        let result = randomInt(3);
+        for (let player of playArray) {
+            if (randomInt(3) == result) {
+                this._winnersW.push(player);
+            }
+        }
+        return this._winnersW;
+    }
+    profitMultiplier(_gambler) { return 3; }
+}
 /**
  * Helper function to generate uniform random numbers between [0, upper).
  * So randomInt( 5 ) generates a number between 0 and 4.
@@ -217,8 +236,11 @@ class Gambler {
      */
     addMoney(amount) {
         this._money += amount;
-        if (this instanceof StreakGambler) {
+        if (this instanceof StreakGambler && amount > 0) {
             this.changeBet();
+        }
+        if (this instanceof MartingaleGambler && amount > 0) {
+            this.mChangeBet();
         }
     }
     /**
@@ -300,10 +322,35 @@ class StreakGambler extends Gambler {
         this.sBet = (this.sBet * this.lossMult);
         if (this.money <= this.minBet || tempBet >= this.money)
             return this.money;
+        if (tempBet <= this.minBet) {
+            this.sBet = this.minBet;
+            return this.minBet;
+        }
         return tempBet;
     }
     changeBet() {
+        if (this.sBet == this.minBet) {
+            this.sBet = (this.sBet * this.winMult);
+            return;
+        }
         this.sBet = (this.sBet * (this.winMult / this.lossMult));
+    }
+}
+//MartingaleGambler
+class MartingaleGambler extends Gambler {
+    constructor(name, startingFunds, mBet, mTarget) {
+        super(name, startingFunds, mTarget);
+        this.mBet = mBet;
+    }
+    getBetSize() {
+        let tempBet = this.mBet;
+        this.mBet = (this.mBet * 2);
+        if (tempBet >= this.money)
+            return this.money;
+        return tempBet;
+    }
+    mChangeBet() {
+        this.mBet = (this.mBet / 2);
     }
 }
 class Casino {
@@ -312,6 +359,7 @@ class Casino {
             new TailsIWin(this),
             new GuessTheNumber(this),
             new OffTrackGuineaPigRacing(this),
+            new WhichCupHasTheMarble(this),
         ];
         this._profits = 0;
         this._gamblers = new Set([
@@ -329,6 +377,11 @@ class Casino {
             // Arg 6 is how much they multiply their bet by when they lose
             // Arg 7 is their target. How much they want to make. 
             new StreakGambler("Camille", 200, 10, 10, 2, 0.5, 500),
+            // Arg 1 name
+            // Arg 2 starting amount
+            // Arg 3 starting bet
+            // Arg 4 target
+            new MartingaleGambler("Martin", 300, 1, 500),
         ]);
         this._maxRounds = maxRounds;
         this._currentRound = 0;
