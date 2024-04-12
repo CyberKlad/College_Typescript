@@ -258,7 +258,7 @@ class HighRiskGambler {
         return ((this.money) / 2);
     }
     changeBet() {
-        //doesnt change bet
+        //this isnt suppose to do anything
         return;
     }
     get name() { return this._name; }
