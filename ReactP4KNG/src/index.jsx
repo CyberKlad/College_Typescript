@@ -44,6 +44,9 @@ class BlackJackDeck extends react_1.Component {
         this.drawCurs = 0;
         this.houseHidden = [];
         this.stayYN = 0;
+        this.gameEnd = 0;
+        this.bustedPlayer = 0;
+        this.bustedHouse = 0;
         this.state = new BlackJackState();
         this.addCard = this.addCard.bind(this);
         this.addCardHouse = this.addCardHouse.bind(this);
@@ -51,31 +54,43 @@ class BlackJackDeck extends react_1.Component {
         this.stayButton = this.stayButton.bind(this);
     }
     render() {
+        this.bustedPlayer = this.totalPlayer;
+        if (this.totalPlayer == 999)
+            this.bustedPlayer = "BUSTED";
+        this.bustedHouse = this.totalHouse;
+        if (this.totalHouse == 999)
+            this.bustedHouse = "BUSTED";
         var result = "";
         result += "Player Hand: ";
         for (let i = 0; i < this.playerHand.length; i++) {
             result += String.fromCodePoint(this.playerHand[i][1]);
         }
-        result += " Player Total: " + this.totalPlayer;
+        result += " Player Total: " + this.bustedPlayer;
         var resultHouse = "";
         resultHouse += "House Hand: ";
         for (let i = 0; i < this.houseHand.length; i++) {
             resultHouse += String.fromCodePoint(this.houseHand[i][1]);
         }
-        resultHouse += " House Total: " + this.totalHouse;
+        resultHouse += " House Total: " + this.bustedHouse;
         return <div>
-        <p>{result}</p>
-        <p>{resultHouse}</p>
-        <button onClick={this.addCard}>Hit!</button>
-        <button onClick={this.stayButton}>Stay!</button>
-        <button onClick={this.resetGame}>New Game / Reset Game</button>
-        <p>{this.state.whoWon}</p>
+        <p style={{ fontSize: 70, color: 'green' }}>{result}</p>
+        <p style={{ fontSize: 70, color: 'green' }}>{resultHouse}</p>
+        <button style={{ fontSize: 80 }} onClick={this.addCard}>Hit!</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <button style={{ fontSize: 80 }} onClick={this.stayButton}>Stay!</button>
+        <br />
+        <br />
+        <button style={{ fontSize: 50 }} onClick={this.resetGame}>New Game / Reset Game</button>
+        <p style={{ fontSize: 70, color: 'blue' }}>{this.state.whoWon}</p>
         </div>;
     }
     addCard() {
+        if (this.gameEnd)
+            return;
         let newState = new BlackJackState();
         if (this.stayYN == 1) {
-            newState.whoWon = "";
+            newState.whoWon = newState.whoWon + "You Have Stayed and Can Not Draw More Cards";
             return;
         }
         if (this.bjDeck[0] == null) {
@@ -92,17 +107,22 @@ class BlackJackDeck extends react_1.Component {
         for (let i = 0; i < this.playerHand.length; i++) {
             this.totalPlayer += this.playerHand[i][0];
         }
-        if (this.totalPlayer >= 21 && this.numberAces > 0) {
+        if (this.totalPlayer > 21 && this.numberAces > 0) {
             this.totalPlayer -= 10;
             this.numberAces -= 1;
         }
         if (this.totalPlayer > 21) {
-            this.totalPlayer = "BUSTED";
+            this.gameEnd += 1;
+            newState.whoWon = "You Busted, House Won.";
+            this.totalPlayer = 999;
+            this.setState(newState);
+            return;
         }
         newState.whoWon = "";
         this.setState(newState);
     }
     addCardHouse() {
+        let newState = new BlackJackState();
         if (this.bjDeck[this.curs][0] == 11) {
             this.numberAcesHouse += 1;
         }
@@ -112,16 +132,22 @@ class BlackJackDeck extends react_1.Component {
         for (let i = 0; i < this.houseHand.length; i++) {
             this.totalHouse += this.houseHand[i][0];
         }
-        if (this.totalHouse >= 21 && this.numberAcesHouse > 0) {
+        if (this.totalHouse > 21 && this.numberAcesHouse > 0) {
             this.totalHouse -= 10;
             this.numberAcesHouse -= 1;
         }
         if (this.totalHouse > 21) {
-            this.totalHouse = "BUSTED";
+            this.gameEnd += 1;
+            this.totalHouse = 999;
+            this.setState(newState);
+            return;
         }
+        newState.whoWon = "";
+        this.setState(newState);
     }
     resetGame() {
         let newState = new BlackJackState();
+        this.gameEnd = 0;
         this.stayYN = 0;
         this.bjDeck = [[11, 0x1F0A1], [2, 0x1F0A2], [3, 0x1F0A3], [4, 0x1F0A4], [5, 0x1F0A5], [6, 0x1F0A6], [7, 0x1F0A7], [8, 0x1F0A8], [9, 0x1F0A9], [10, 0x1F0AA], [10, 0x1F0AB], [10, 0x1F0AD], [10, 0x1F0AE],
             [11, 0x1F0B1], [2, 0x1F0B2], [3, 0x1F0B3], [4, 0x1F0B4], [5, 0x1F0B5], [6, 0x1F0B6], [7, 0x1F0B7], [8, 0x1F0B8], [9, 0x1F0B9], [10, 0x1F0BA], [10, 0x1F0BB], [10, 0x1F0BD], [10, 0x1F0BE],
@@ -134,8 +160,13 @@ class BlackJackDeck extends react_1.Component {
             this.bjDeck[rndNum] = rndOne;
             this.bjDeck[i] = rndTwo;
         }
+        this.curs = 51;
+        this.totalHouse = 0;
+        this.totalPlayer = 0;
         this.playerHand = [];
         this.houseHand = [];
+        this.numberAces = 0;
+        this.numberAcesHouse = 0;
         this.addCard();
         this.addCardHouse();
         this.addCard();
@@ -146,16 +177,33 @@ class BlackJackDeck extends react_1.Component {
         this.setState(newState);
     }
     stayButton() {
+        if (this.gameEnd)
+            return;
         let newState = new BlackJackState();
+        if (this.bjDeck[0] == null) {
+            newState.whoWon = "Thats the Stay! Button, Press New Game to Start";
+            this.setState(newState);
+            return;
+        }
         this.stayYN = 1;
         this.houseHand[1] = this.houseHidden[0];
-        newState.whoWon = "";
+        this.totalHouse += this.houseHidden[0][0];
+        while (this.totalHouse < 17)
+            this.addCardHouse();
+        if (!this.gameEnd)
+            newState.whoWon = "Push no Winners";
+        newState.whoWon = "House Busted, You Won.";
+        if (this.totalPlayer > this.totalHouse && !this.gameEnd)
+            newState.whoWon = "Player has Won";
+        if (this.totalPlayer < this.totalHouse && !this.gameEnd)
+            newState.whoWon = "House has Won";
+        this.gameEnd = 1;
         this.setState(newState);
     }
 }
 class App extends react_1.Component {
     render() {
-        return <div>
+        return <div style={{ fontSize: 50, textAlign: 'center' }}>
             <p>welcome to Black Jack!</p>
             <BlackJackDeck>
             </BlackJackDeck>
