@@ -17,37 +17,50 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var client_1 = require("react-dom/client");
-var MyListState = /** @class */ (function () {
-    function MyListState() {
-        this.nClicks = 0;
+//interface MyListProps {
+//    maxItems?: number;
+//    children?: React.JSX.Element | React.JSX.Element[];
+//}
+//class BlackJackState {
+//    playerHand : number[][];
+//}
+var BlackJackDeck = /** @class */ (function (_super) {
+    __extends(BlackJackDeck, _super);
+    function BlackJackDeck() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    return MyListState;
-}());
-var MyList = /** @class */ (function (_super) {
-    __extends(MyList, _super);
-    function MyList(props) {
-        var _this = _super.call(this, props) || this;
-        _this.state = new MyListState();
-        _this.addClick = _this.addClick.bind(_this);
-        return _this;
-    }
-    MyList.prototype.render = function () {
-        var _a;
-        var children = react_1.default.Children.toArray(this.props.children);
-        var result = [];
-        var nChildren = (_a = this.props.maxItems) !== null && _a !== void 0 ? _a : children.length;
-        for (var child = 0; child < Math.min(nChildren, children.length); child++) {
-            result.push(children[child]);
+    //constructor(props: MyListProps) {
+    //    super(props);
+    //    this.state = new BlackJackState();
+    //    this.addClick = this.addClick.bind(this);
+    //}
+    BlackJackDeck.prototype.render = function () {
+        var bjDeck = [[11, "&#1F0A1;"], [2, \u1F0A2], [3, \u1F0A3], [4, \u1F0A4], [5, \u1F0A5], [6, \u1F0A6], [7, \u1F0A7], [8, \u1F0A8], [9, \u1F0A9], [10, \u1F0AA], [10, \u1F0AB], [10, \u1F0AD], [10, \u1F0AE],
+            [11, \u1F0B1], [2, \u1F0B2], [3, \u1F0B3], [4, \u1F0B4], [5, \u1F0B5], [6, \u1F0B6], [7, \u1F0B7], [8, \u1F0B8], [9, \u1F0B9], [10, \u1F0BA], [10, \u1F0BB], [10, \u1F0BD], [10, \u1F0BE],
+            [11, \u1F0C1], [2, \u1F0C2], [3, \u1F0C3], [4, \u1F0C4], [5, \u1F0C5], [6, \u1F0C6], [7, \u1F0C7], [8, \u1F0C8], [9, \u1F0C9], [10, \u1F0CA], [10, \u1F0CB], [10, \u1F0CD], [10, \u1F0CE],
+            [11, \u1F0D1], [2, \u1F0D2], [3, \u1F0D3], [4, \u1F0D4], [5, \u1F0D5], [6, \u1F0D6], [7, \u1F0D7], [8, \u1F0D8], [9, \u1F0D9], [10, \u1F0DA], [10, \u1F0DB], [10, \u1F0DD], [10, \u1F0DE]];
+        var result = ['hi'];
+        //const nChildren = this.props.maxItems ?? children.length;
+        for (var i = 0; i < 0; i++) {
+            var rndNum = Math.floor(Math.random() * 51);
+            var rndOne = bjDeck[i];
+            var rndTwo = bjDeck[rndNum];
+            bjDeck[rndNum] = rndOne;
+            bjDeck[i] = rndTwo;
         }
-        result.push(<li>You have clicked {this.state.nClicks} times.</li>);
-        return <ul onClick={this.addClick}>{result}</ul>;
+        //result.push(bjDeck[0][1]); 
+        //for( let child = 0; child < Math.min(nChildren, children.length); child++ ) {
+        //    result.push( children[child] );
+        //}
+        //result.push( <li>You have clicked {this.state.nClicks} times.</li> );
+        return <ul>document.createTextNode(String.fromCodePoint(0x1F0C1))</ul>;
     };
-    MyList.prototype.addClick = function () {
+    BlackJackDeck.prototype.addClick = function () {
         var newState = new MyListState();
-        newState.nClicks = this.state.nClicks + 1;
+        newState.playerHand.push();
         this.setState(newState);
     };
-    return MyList;
+    return BlackJackDeck;
 }(react_1.Component));
 var App = /** @class */ (function (_super) {
     __extends(App, _super);
@@ -57,15 +70,14 @@ var App = /** @class */ (function (_super) {
     App.prototype.render = function () {
         return <div>
             <p>welcome to my web app.</p>
-            <MyList maxItems={2}>
-                <li>one</li>
-                <li>two</li>
-                <li>three</li>
-            </MyList>
+            <BlackJackDeck>
+            </BlackJackDeck>
         </div>;
     };
     return App;
 }(react_1.Component));
+//below is code placing TypeScript into the HTML file in the spot of an ID labeled root
+//This was provided by the professor
 var rootElem = document.getElementById('root');
 if (rootElem == null) {
     alert('you forgot to put a root element in your HTML file.');
