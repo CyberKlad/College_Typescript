@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 interface BlackJackProp {
 }
 
+//winning message does not need to reload the whole page
 class BlackJackState {
     whoWon: String = "Click New Game to Start";
 }
@@ -184,7 +185,8 @@ class BlackJackDeck extends Component<BlackJackProp, BlackJackState>{
 class App extends Component {
     override render(): ReactNode {
         return <div style={{fontSize:50, textAlign: 'center'}}>
-            <p>welcome to Black Jack!</p>
+            <p style={{fontSize:20}}>Welcome to Black Jack!</p>
+            <p style={{fontSize:20}}>By Korbin Gillette from CS 224 created 16 April 2024</p>
             <BlackJackDeck>
             </BlackJackDeck>
         </div>

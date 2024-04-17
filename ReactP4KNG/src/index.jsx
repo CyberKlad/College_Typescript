@@ -204,7 +204,8 @@ class BlackJackDeck extends react_1.Component {
 class App extends react_1.Component {
     render() {
         return <div style={{ fontSize: 50, textAlign: 'center' }}>
-            <p>welcome to Black Jack!</p>
+            <p style={{ fontSize: 20 }}>Welcome to Black Jack!</p>
+            <p style={{ fontSize: 20 }}>By Korbin Gillette from CS 224 created 16 April 2024</p>
             <BlackJackDeck>
             </BlackJackDeck>
         </div>;
